@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>後期時間割</title>
+<style>
+:root{--bg:#f6f7f9;--sf:#fff;--tx:#1d2330;--mu:#677084;--ln:#e1e5ec;--ac:#2456d6;--bs:65%;--bl:90%;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151b;--sf:#1b1f27;--tx:#e8ebf2;--mu:#9aa3b5;--ln:#2c323d;--ac:#7ea2ff;--bs:35%;--bl:24%}}
+:root[data-theme="dark"]{--bg:#12151b;--sf:#1b1f27;--tx:#e8ebf2;--mu:#9aa3b5;--ln:#2c323d;--ac:#7ea2ff;--bs:35%;--bl:24%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:12px 8px 24px}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.top h1{font-size:17px;margin:0;flex:1}
+.top small{display:block;font-size:12px;color:var(--mu);font-weight:400;margin-top:2px}
+button{font:inherit;font-size:14px;color:var(--tx);background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:6px 11px;cursor:pointer}
+button:focus-visible,.ev:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.cal{background:var(--sf);border:1px solid var(--ln);border-radius:10px;overflow:hidden}
+.row{display:grid;grid-template-columns:34px repeat(5,1fr)}
+.hd{border-bottom:1px solid var(--ln);text-align:center;font-size:12px;color:var(--mu);padding:6px 0}
+.hd b{display:inline-block;min-width:24px;line-height:24px;border-radius:12px;font-size:14px;color:var(--tx)}
+.hd.today b{background:var(--ac);color:#fff}
+.body{position:relative;height:625px}
+.col{position:relative;border-left:1px solid var(--ln)}
+.col.today{background:color-mix(in srgb,var(--ac) 7%,transparent)}
+.tl{position:absolute;left:0;width:34px;font-size:10px;color:var(--mu);text-align:right;padding-right:4px;box-sizing:border-box;transform:translateY(-1px)}
+.ev{position:absolute;left:2px;right:2px;overflow:hidden;border-radius:6px;padding:3px 4px;box-sizing:border-box;font-size:10px;line-height:1.3;text-align:left;cursor:pointer;color:var(--tx);background:hsl(var(--h) var(--bs) var(--bl));border:1px solid hsl(var(--h) 55% 50%);border-left-width:4px}
+.ev b{display:block;font-size:11px}
+.ev.l{border-style:dashed;border-left-style:solid}
+.ev.o{border-style:dotted;border-left-style:solid}
+.ev.sel{box-shadow:0 0 0 2px var(--ac)}
+.det{margin-top:10px;background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.7;min-height:48px}
+.det h2{font-size:16px;margin:0 0 4px}
+.det .mu,.lg{color:var(--mu);font-size:12px}
+.lg{margin-top:8px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1}
+.tabs button.on,.chips button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
+.chips button{white-space:nowrap;padding:4px 10px;font-size:13px}
+.gh{font-size:13px;font-weight:600;margin:14px 0 4px}
+.gh.late{color:#d9342b}
+.gh span{color:var(--mu);font-weight:400;margin-left:4px}
+#v2 ul{list-style:none;padding:0;margin:0;background:var(--sf);border:1px solid var(--ln);border-radius:10px}
+#v2 li{padding:8px 12px;border-bottom:1px solid var(--ln)}
+#v2 li:last-child{border-bottom:0}
+.lt{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.lt label{flex:1;font-size:14px}
+.ls{font-size:12px;color:var(--mu);margin-top:2px;display:flex;gap:6px;align-items:center}
+.chip{display:inline-block;padding:0 6px;border-radius:6px;font-size:11px;color:var(--tx);background:hsl(var(--h) var(--bs) var(--bl));border:1px solid hsl(var(--h) 55% 50%)}
+.add.w{flex-wrap:wrap}
+.add.w input[type=text]{flex:1 1 100%}
+.add select,.add input[type=date]{font:inherit;font-size:16px;padding:6px 8px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx)}
+#v2 .add{margin:0 0 6px}
+.bg{display:inline-block;background:var(--ac);color:#fff;border-radius:8px;padding:0 4px;font-size:9px;margin-left:2px}
+.todo{margin-top:10px;border-top:1px solid var(--ln);padding-top:8px}
+.th{font-size:13px;color:var(--mu)}
+.todo ul{list-style:none;padding:0;margin:4px 0}
+.todo li{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.todo label{flex:1}
+.dn{text-decoration:line-through;color:var(--mu)}
+.add{display:flex;gap:6px;margin-top:6px}
+.add input[type=text]{flex:1;min-width:0;font:inherit;font-size:16px;padding:6px 8px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tabs"><button id="t1" class="on">週表示</button><button id="t2">やること <span id="tc" class="bg" style="display:none"></span></button></div>
+  <div id="v1">
+  <div class="top">
+    <button id="prev" aria-label="前の週">‹</button>
+    <h1 id="rng"></h1>
+    <button id="now">今週</button>
+    <button id="next" aria-label="次の週">›</button>
+  </div>
+  <div class="cal">
+    <div class="row" id="hdr"></div>
+    <div class="row body" id="bd"></div>
+  </div>
+  <div class="det" id="det"></div>
+  <div class="lg">実線＝登校 / 破線＝ライブ / 点線＝オンデマンド</div>
+  </div>
+  <div id="v2" hidden></div>
+</div>
+<script>
+const S={b:['病原体検査学Ⅰ','病原体',200],m:['医用システム情報学Ⅰ','医用SI',160],s:['生化学Ⅰ','生化学',20],k:['臨床検査総合管理学','総合管理',270],h:['人体構造学','人体構造',340],a:['分析化学検査学Ⅰ','分析化学',45],p:['病理検査学Ⅰ','病理',300],e:['後期定期試験','試験',0],r:['補講・再試','補講',90],x:['海外研修報告会','海外研修',130]};
+const F={c:'登校',l:'ライブ',o:'オンデマンド'};
+const T=[[530,630,'8:50','10:30'],[645,745,'10:45','12:25'],[810,910,'13:30','15:10'],[925,1025,'15:25','17:05'],[1035,1135,'17:15','18:55']];
+// 日付(MMDD) 講 科目 回 形態 教室
+const raw=`
+1002 1 b 1 c 講義室1
+1002 2 m 1 c 講義室5
+1002 3 s 1 c 講義室1
+1002 4 s 2 c 講義室1
+1002 5 a 1 c 講義室5
+1005 1 k 1 c 講義室5
+1005 2 k 2 c 講義室5
+1005 3 k 3 c 講義室5
+1005 4 k 4 c 講義室5
+1006 1 b 2 o 講義室1
+1006 2 h 1 c 共用講義室2
+1006 3 h 2 c 共用講義室2
+1006 4 h 3 c 共用講義室2
+1009 1 k 5 c 講義室5
+1009 2 m 2 c 講義室5
+1009 3 s 3 c 講義室1
+1009 4 s 4 c 講義室1
+1013 1 b 3 c 講義室1
+1013 2 h 4 c 共用講義室2
+1013 3 h 5 c 共用講義室2
+1013 4 h 6 c 共用講義室2
+1013 5 a 2 l 講義室5
+1016 1 k 6 c 講義室5
+1016 2 m 3 c 講義室5
+1016 3 a 3 c 講義室5
+1016 4 a 4 c 8F実習室1
+1016 5 a 5 c 8F実習室1
+1019 1 a 6 l 講義室5
+1019 2 h 7 c 講義室1
+1019 3 a 7 c 講義室5
+1019 4 a 8 c 7F実習室
+1019 5 a 9 c 7F実習室
+1020 1 b 4 c 講義室1
+1020 2 h 8 c 講義室1
+1020 3 h 9 c 講義室1
+1020 4 h 10 c 講義室1
+1023 1 k 7 c 講義室5
+1023 2 m 4 c 講義室5
+1023 3 s 5 c 講義室1
+1023 4 s 6 c 講義室1
+1023 5 a 10 l 講義室5
+1026 2 h 11 c 共用講義室2
+1026 3 a 11 c 講義室5
+1026 4 a 12 c 7F実習室
+1026 5 a 13 c 7F実習室
+1027 1 b 5 l 講義室1
+1027 2 h 12 c 共用講義室2
+1027 3 h 13 c 共用講義室2
+1027 4 h 14 c 共用講義室2
+1030 1 b 6 l 講義室1
+1030 3 s 7 c 講義室1
+1030 4 s 8 c 講義室1
+1102 2 h 15 c 共用講義室2
+1102 3 h 16 c 共用講義室2
+1102 4 h 17 c 共用講義室2
+1104 5 x 1 - -
+1106 3 s 9 c 講義室1
+1106 4 s 10 c 講義室1
+1109 1 a 14 o -
+1109 2 a 15 l 講義室5
+1109 3 a 16 c 講義室5
+1109 4 a 17 c 8F実習室1
+1109 5 a 18 c 8F実習室1
+1110 1 b 7 c 講義室1
+1110 2 h 18 c 共用講義室2
+1110 3 h 19 c 共用講義室2
+1110 4 h 20 c 共用講義室2
+1113 1 a 19 o -
+1113 2 a 20 l 講義室5
+1113 3 p 1 c 講義室1
+1113 4 p 2 c 講義室1
+1113 5 a 21 o -
+1116 1 p 3 c 講義室1
+1116 2 p 4 c 講義室1
+1116 3 a 22 c 講義室5
+1116 4 a 23 c 7F実習室
+1116 5 a 24 c 7F実習室
+1117 1 b 8 c 講義室1
+1117 2 h 21 c 共用講義室2
+1117 3 h 22 c 共用講義室2
+1117 4 h 23 c 共用講義室2
+1117 5 a 25 l 講義室5
+1124 1 s 11 l -
+1124 3 s 12 l -
+1124 4 s 13 l -
+1130 1 p 5 c 講義室1
+1130 2 p 6 c 講義室1
+1201 3 k 8 c 講義室5
+1204 1 k 9 c 講義室5
+1204 2 m 5 c 講義室5
+1207 1 s 14 c 講義室1
+1207 2 s 15 c 講義室1
+1211 1 k 10 c 講義室5
+1211 2 m 6 c 講義室5
+1218 1 k 11 c 講義室5
+1218 2 m 7 c 講義室5
+1221 1 p 7 c 講義室1
+1221 2 p 8 c 講義室1
+0108 1 k 12 c 講義室5
+0108 2 m 8 c 講義室5
+0112 1 e 1 - -
+0112 2 e 2 - -
+0112 3 e 3 - -
+0112 4 e 4 - -
+0112 5 e 5 - -
+0115 1 e 6 - -
+0115 2 e 7 - -
+0115 3 e 8 - -
+0115 4 e 9 - -
+0115 5 e 10 - -
+0118 1 e 11 - -
+0118 2 e 12 - -
+0118 3 e 13 - -
+0118 4 e 14 - -
+0118 5 e 15 - -
+0119 1 e 16 - -
+0119 2 e 17 - -
+0119 3 e 18 - -
+0119 4 e 19 - -
+0119 5 e 20 - -
+0122 1 e 21 - -
+0122 2 e 22 - -
+0122 3 e 23 - -
+0122 4 e 24 - -
+0122 5 e 25 - -
+0125 1 e 26 - -
+0125 2 e 27 - -
+0125 3 e 28 - -
+0125 4 e 29 - -
+0125 5 e 30 - -
+0126 1 r 1 - -
+0126 2 r 2 - -
+0126 3 r 3 - -
+0126 4 r 4 - -
+0126 5 r 5 - -
+0129 1 r 6 - -
+0129 2 r 7 - -`;
+const p=n=>String(n).padStart(2,'0');
+const key=d=>d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+const EV={};
+raw.trim().split('\n').forEach(l=>{
+  const [md,sl,sj,n,f,r]=l.trim().split(' ');
+  const m=+md.slice(0,2),d=+md.slice(2);
+  const k=(m<=3?2027:2026)+'-'+p(m)+'-'+p(d);
+  (EV[k]=EV[k]||[]).push({sl:+sl-1,sj,n,f,r:r==='-'?'':r});
+});
+const monday=d=>{const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const hm=m=>Math.floor(m/60)+':'+p(m%60);
+let cur=monday(new Date()),sel=null;
+const $=id=>document.getElementById(id);
+const shortRoom=r=>r.replace('共用講義室','共用').replace('講義室','室');
+function render(){
+  const days=[...Array(5)].map((_,i)=>{const d=new Date(cur);d.setDate(d.getDate()+i);return d});
+  const tk=key(new Date());
+  $('rng').innerHTML=`${days[0].getMonth()+1}/${days[0].getDate()} – ${days[4].getMonth()+1}/${days[4].getDate()}<small>${days[0].getFullYear()}年</small>`;
+  $('hdr').innerHTML='<div class="hd"></div>'+days.map(d=>`<div class="hd ${key(d)===tk?'today':''}">${'月火水木金'[d.getDay()-1]}<br><b>${d.getDate()}</b></div>`).join('');
+  const O=510;
+  let h='<div style="position:relative">'+T.map(t=>`<div class="tl" style="top:${t[0]-O}px">${t[2]}</div>`).join('')+'</div>';
+  days.forEach(d=>{
+    const k=key(d);
+    h+=`<div class="col ${k===tk?'today':''}">`+(EV[k]||[]).map(e=>{
+      const t=T[e.sl],s=S[e.sj];
+      const id=k+'_'+e.sl;
+      return `<button class="ev ${e.f==='l'?'l':e.f==='o'?'o':''} ${sel===id?'sel':''}" data-id="${id}" style="--h:${s[2]};top:${t[0]-O}px;height:${t[1]-t[0]}px"><b>${s[1]}${bd(id)}</b>${/[erx]/.test(e.sj)?'':'第'+e.n+'回'}<br>${e.f==='o'?'オンデマンド':shortRoom(e.r)||(e.f==='l'?'ライブ':'')}</button>`;
+    }).join('')+'</div>';
+  });
+  $('bd').innerHTML=h;updTc();
+  $('bd').querySelectorAll('.ev').forEach(b=>b.onclick=()=>{sel=b.dataset.id;show(days);render()});
+  if(!sel)show(days);
+}
+function show(days){
+  const el=$('det');
+  if(sel){
+    const [k,sl]=sel.split('_');const e=EV[k].find(x=>x.sl==sl),s=S[e.sj],t=T[e.sl];
+    const [y,m,d]=k.split('-').map(Number);
+    el.innerHTML=`<h2>${s[0]}</h2>${m}月${d}日 ${e.sl+1}講 ${t[2]}–${t[3]}<br>${/[erx]/.test(e.sj)?'':'第'+e.n+'回 ・ 必修<br>'}${e.f?'形態：'+F[e.f]+'<br>':''}${e.r?'教室：'+e.r:''}<div class="todo" id="todo"></div>`;
+    todoUI(sel);
+    return;
+  }
+  const c=days.reduce((a,d)=>a+(EV[key(d)]||[]).length,0);
+  el.innerHTML=c?`<span class="mu">この週は ${c} コマ。授業をタップすると詳細が出ます。</span>`:`<span class="mu">この週に授業はありません。</span>`;
+}
+let TD={};
+try{TD=JSON.parse(localStorage.getItem('tt-todos')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('tt-todos',JSON.stringify(TD))}catch(e){}};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function bd(id){const n=(TD[id]||[]).filter(x=>!x.d).length;return n?` <span class="bg">${n}</span>`:''}
+function todoUI(id){
+  const box=$('todo'),list=TD[id]||[];
+  box.innerHTML=`<div class="th">やること</div><ul>${list.map((x,i)=>`<li><label><input type="checkbox" data-i="${i}" ${x.d?'checked':''}> <span class="${x.d?'dn':''}">${esc(x.t)}</span>${x.u?` <small>${md(x.u)}まで</small>`:''}</label><button data-x="${i}" aria-label="削除">×</button></li>`).join('')}</ul><div class="add w"><input type="text" id="ti" placeholder="例：小テスト範囲を復習" maxlength="80"><input type="date" id="td" value="${id.split('_')[0]}"><button id="ta">追加</button></div>`;
+  const done=()=>{if(!(TD[id]||[]).length)delete TD[id];save();todoUI(id);render()};
+  const add=()=>{const v=$('ti').value.trim();if(!v)return;(TD[id]=TD[id]||[]).push({t:v,d:false,u:$('td').value});done()};
+  $('ta').onclick=add;
+  $('ti').onkeydown=ev=>{if(ev.key==='Enter')add()};
+  box.querySelectorAll('input[type=checkbox]').forEach(c=>c.onchange=()=>{TD[id][+c.dataset.i].d=c.checked;done()});
+  box.querySelectorAll('li button').forEach(b=>b.onclick=()=>{TD[id].splice(+b.dataset.x,1);done()});
+}
+const md=u=>{const a=u.split('-');return +a[1]+'/'+ +a[2]};
+let flt='',nsel='s';
+function allTodos(){const o=[];for(const k in TD){TD[k].forEach((x,i)=>{let sj,src;if(k.startsWith('s_')){sj=k.slice(2);src='科目共通'}else{const q=k.split('_'),e=(EV[q[0]]||[]).find(z=>z.sl==q[1]);if(!e)return;sj=e.sj;src=md(q[0])+' '+(+q[1]+1)+'講'}o.push({k,i,x,sj,src})})}return o}
+function updTc(){const n=allTodos().filter(o=>!o.x.d).length;$('tc').textContent=n;$('tc').style.display=n?'':'none'}
+function grp(o){if(o.x.d)return 5;const u=o.x.u;if(!u)return 4;const w=new Date(),t=key(w);if(u<t)return 0;if(u===t)return 1;w.setDate(w.getDate()+6-((w.getDay()+6)%7));return u<=key(w)?2:3}
+const GN=['期限切れ','今日','今週中','来週以降','期限なし','完了'];
+function v2(){
+  const box=$('v2'),sub=Object.keys(S).filter(c=>!/[erx]/.test(c)),sv=flt||nsel;
+  const all=allTodos().filter(o=>!flt||o.sj===flt);
+  let h=`<div class="chips"><button data-f="" class="${flt?'':'on'}">すべて</button>${sub.map(c=>`<button data-f="${c}" class="${flt===c?'on':''}">${S[c][1]}</button>`).join('')}</div>`;
+  h+=`<div class="add w"><input type="text" id="nt" placeholder="科目のやること" maxlength="80"><select id="ns">${sub.map(c=>`<option value="${c}" ${c===sv?'selected':''}>${S[c][1]}</option>`).join('')}</select><input type="date" id="nd"><button id="na">追加</button></div>`;
+  GN.forEach((n,g)=>{
+    const it=all.filter(o=>grp(o)===g).sort((a,b)=>(a.x.u||'9').localeCompare(b.x.u||'9'));
+    if(!it.length)return;
+    h+=`<div class="gh ${g?'':'late'}">${n}<span>${it.length}</span></div><ul>`+it.map(o=>`<li><div class="lt"><label><input type="checkbox" data-k="${o.k}" data-i="${o.i}" ${o.x.d?'checked':''}> <span class="${o.x.d?'dn':''}">${esc(o.x.t)}</span></label><button data-k="${o.k}" data-x="${o.i}" aria-label="削除">×</button></div><div class="ls"><span class="chip" style="--h:${S[o.sj][2]}">${S[o.sj][1]}</span>${o.src}${o.x.u?' ・ '+md(o.x.u)+'まで':''}</div></li>`).join('')+'</ul>';
+  });
+  if(!all.length)h+='<div class="det"><span class="mu">やることはありません。上で科目のやることを追加するか、カレンダーの授業から追加できます。</span></div>';
+  box.innerHTML=h;
+  box.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>{flt=b.dataset.f;v2()});
+  $('ns').onchange=e=>{nsel=e.target.value};
+  const add=()=>{const v=$('nt').value.trim();if(!v)return;nsel=$('ns').value;const k='s_'+nsel;(TD[k]=TD[k]||[]).push({t:v,d:false,u:$('nd').value});save();v2();updTc()};
+  $('na').onclick=add;$('nt').onkeydown=e=>{if(e.key==='Enter')add()};
+  box.querySelectorAll('input[type=checkbox]').forEach(c=>c.onchange=()=>{TD[c.dataset.k][+c.dataset.i].d=c.checked;save();v2();render()});
+  box.querySelectorAll('li button').forEach(b=>b.onclick=()=>{const l=TD[b.dataset.k];l.splice(+b.dataset.x,1);if(!l.length)delete TD[b.dataset.k];save();v2();render()});
+}
+function setTab(n){$('v1').hidden=n!==1;$('v2').hidden=n!==2;$('t1').className=n===1?'on':'';$('t2').className=n===2?'on':'';if(n===2)v2()}
+$('t1').onclick=()=>setTab(1);$('t2').onclick=()=>setTab(2);
+$('prev').onclick=()=>{cur.setDate(cur.getDate()-7);sel=null;render()};
+$('next').onclick=()=>{cur.setDate(cur.getDate()+7);sel=null;render()};
+$('now').onclick=()=>{cur=monday(new Date());sel=null;render()};
+render();
+</script>
+</body>
+</html>
